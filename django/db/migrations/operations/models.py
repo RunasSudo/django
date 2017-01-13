@@ -48,11 +48,12 @@ class CreateModel(ModelOperation):
 
     serialization_expand_args = ['fields', 'options', 'managers']
 
-    def __init__(self, name, fields, options=None, bases=None, managers=None):
+    def __init__(self, name, fields, options=None, bases=None, managers=None, metaclass=None):
         self.fields = fields
         self.options = options or {}
         self.bases = bases or (models.Model,)
         self.managers = managers or []
+        self.metaclass = metaclass or models.base.ModelBase
         super(CreateModel, self).__init__(name)
         # Sanity-check that there are no duplicated field names, bases, or
         # manager names
@@ -75,6 +76,8 @@ class CreateModel(ModelOperation):
             kwargs['bases'] = self.bases
         if self.managers and self.managers != [('objects', models.Manager())]:
             kwargs['managers'] = self.managers
+        if self.metaclass and self.metaclass != models.base.ModelBase:
+            kwargs['metaclass'] = self.metaclass
         return (
             self.__class__.__name__,
             [],
@@ -89,6 +92,7 @@ class CreateModel(ModelOperation):
             dict(self.options),
             tuple(self.bases),
             list(self.managers),
+            self.metaclass,
         ))
 
     def database_forwards(self, app_label, schema_editor, from_state, to_state):

@@ -333,7 +333,7 @@ class ModelState(object):
     assign new ones, as these are not detached during a clone.
     """
 
-    def __init__(self, app_label, name, fields, options=None, bases=None, managers=None):
+    def __init__(self, app_label, name, fields, options=None, bases=None, managers=None, metaclass=None):
         self.app_label = app_label
         self.name = force_text(name)
         self.fields = fields
@@ -341,6 +341,7 @@ class ModelState(object):
         self.options.setdefault('indexes', [])
         self.bases = bases or (models.Model, )
         self.managers = managers or []
+        self.metaclass = metaclass or models.base.ModelBase
         # Sanity-check that fields is NOT a dict. It must be ordered.
         if isinstance(self.fields, dict):
             raise ValueError("ModelState.fields cannot be a dict - it must be a list of 2-tuples.")
@@ -497,6 +498,7 @@ class ModelState(object):
             options,
             bases,
             managers,
+            type(model),
         )
 
     @classmethod
@@ -539,6 +541,7 @@ class ModelState(object):
             options=dict(self.options),
             bases=self.bases,
             managers=list(self.managers),
+            metaclass=self.metaclass,
         )
 
     def render(self, apps):
@@ -569,7 +572,7 @@ class ModelState(object):
                 RemovedInDjango20Warning)
 
             # Then, make a Model object (apps.register_model is called in __new__)
-            return type(
+            return self.metaclass(
                 str(self.name),
                 bases,
                 body,
