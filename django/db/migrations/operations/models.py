@@ -153,6 +153,7 @@ class CreateModel(ModelOperation):
                     options=self.options,
                     bases=self.bases,
                     managers=self.managers,
+                    metaclass=self.metaclass,
                 ),
             ]
         elif isinstance(operation, AlterModelOptions) and self.name_lower == operation.name_lower:
@@ -165,6 +166,7 @@ class CreateModel(ModelOperation):
                     options=new_options,
                     bases=self.bases,
                     managers=self.managers,
+                    metaclass=self.metaclass,
                 ),
             ]
         elif isinstance(operation, FieldOperation) and self.name_lower == operation.model_name_lower:
@@ -188,6 +190,7 @@ class CreateModel(ModelOperation):
                         options=self.options,
                         bases=self.bases,
                         managers=self.managers,
+                        metaclass=self.metaclass,
                     ),
                 ]
             elif isinstance(operation, AlterField):
@@ -201,6 +204,7 @@ class CreateModel(ModelOperation):
                         options=self.options,
                         bases=self.bases,
                         managers=self.managers,
+                        metaclass=self.metaclass,
                     ),
                 ]
             elif isinstance(operation, RemoveField):
@@ -215,6 +219,7 @@ class CreateModel(ModelOperation):
                         options=self.options,
                         bases=self.bases,
                         managers=self.managers,
+                        metaclass=self.metaclass,
                     ),
                 ]
             elif isinstance(operation, RenameField):
@@ -228,6 +233,7 @@ class CreateModel(ModelOperation):
                         options=self.options,
                         bases=self.bases,
                         managers=self.managers,
+                        metaclass=self.metaclass,
                     ),
                 ]
         return super(CreateModel, self).reduce(operation, in_between, app_label=app_label)
